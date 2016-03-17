@@ -698,12 +698,18 @@ CataCamera::spaceToPlane(const Eigen::Vector3d& P, Eigen::Vector2d& p,
     {
         // Apply distortion
         Eigen::Vector2d d_u;
-        distortion(p_u, d_u);
+        Eigen::Matrix<double,2,2> J;
+        distortion(p_u, d_u, J);
         p_d = p_u + d_u;
     }
 
     double gamma1 = mParameters.gamma1();
     double gamma2 = mParameters.gamma2();
+
+    dxdmx = J(0,0);
+    dxdmy = J(0,1);
+    dydmx = J(1,0);
+    dydmy = J(1,1);
 
     // Make the product of the jacobians
     // and add projection matrix jacobian
@@ -807,7 +813,7 @@ CataCamera::distortion(const Eigen::Vector2d& p_u, Eigen::Vector2d& d_u,
     d_u << p_u(0) * rad_dist_u + 2.0 * p1 * mxy_u + p2 * (rho2_u + 2.0 * mx2_u),
            p_u(1) * rad_dist_u + 2.0 * p2 * mxy_u + p1 * (rho2_u + 2.0 * my2_u);
 
-    double dxdmx = 1.0 + rad_dist_u + k1 * 2.0 * mx2_u + k2 * rho2_u * 4.0 * mx2_u + 2.0 * p1 * p_u(1) + 6.0 * p2 * p_u(0);
+    double dxdmx = 1.0 +  rad_dist_u + k1 * 2.0 * mx2_u + k2 * rho2_u * 4.0 * mx2_u + 2.0 * p1 * p_u(1) + 6.0 * p2 * p_u(0); 
     double dydmx = k1 * 2.0 * p_u(0) * p_u(1) + k2 * 4.0 * rho2_u * p_u(0) * p_u(1) + p1 * 2.0 * p_u(0) + 2.0 * p2 * p_u(1);
     double dxdmy = dydmx;
     double dydmy = 1.0 + rad_dist_u + k1 * 2.0 * my2_u + k2 * rho2_u * 4.0 * my2_u + 6.0 * p1 * p_u(1) + 2.0 * p2 * p_u(0);
