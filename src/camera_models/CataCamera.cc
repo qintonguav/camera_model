@@ -698,18 +698,19 @@ CataCamera::spaceToPlane(const Eigen::Vector3d& P, Eigen::Vector2d& p,
     {
         // Apply distortion
         Eigen::Vector2d d_u;
-        Eigen::Matrix<double,2,2> J;
-        distortion(p_u, d_u, J);
+        Eigen::Matrix<double,2,2> dJ;
+        distortion(p_u, d_u, dJ);
         p_d = p_u + d_u;
+        dxdmx = dJ(0,0);
+        dxdmy = dJ(0,1);
+        dydmx = dJ(1,0);
+        dydmy = dJ(1,1);
     }
 
     double gamma1 = mParameters.gamma1();
     double gamma2 = mParameters.gamma2();
 
-    dxdmx = J(0,0);
-    dxdmy = J(0,1);
-    dydmx = J(1,0);
-    dydmy = J(1,1);
+
 
     // Make the product of the jacobians
     // and add projection matrix jacobian
