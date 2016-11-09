@@ -13,3 +13,7 @@ See [Camera.h](https://github.com/dvorak0/camera_model/blob/master/include/camod
  - liftProjective: Lift points from the image plane to the projective space.
  - spaceToPlane: Projects 3D points to the image plane (Pi function)
 
+
+
+copy from
+https://github.com/hengli/camodocal
